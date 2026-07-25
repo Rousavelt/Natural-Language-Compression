@@ -23,7 +23,11 @@ class VerboseHuffmanTree:
             return NotImplemented
         return self.frequency < other.frequency
     
-@functools.total_ordering
+# For this, we order a node by its frequency
+# Then by the value
+# Finally by identifier
+# The goal is that the same input frequency dictionary should always
+# Result in the same encoding
 class HuffmanTree:
     def __init__(self, identifier : int, frequency : float, value : str, left, right):
         self.identifier = identifier
@@ -32,18 +36,14 @@ class HuffmanTree:
         self.left = left
         self.right = right
 
-    def _is_valid_operand(self, other):
-        return (hasattr(other, "frequency"))
+    def sort_key(self):
+        return (self.frequency, self.value, self.identifier)
 
-    def __eq__(self, other):
-        if not self._is_valid_operand(other):
-            return NotImplemented
-        return self.frequency == other.frequency
-    
     def __lt__(self, other):
-        if not self._is_valid_operand(other):
+        if not hasattr(other, "frequency") or not hasattr(other, "value") or not hasattr(other, "identifier"):
             return NotImplemented
-        return self.frequency < other.frequency
+        return self.sort_key() < other.sort_key()
+
 
 token_prob_dict = {}
 token_prob_dict["Cat"] = 0.4
@@ -58,7 +58,7 @@ token_prob_dict["Slaps"] = 0.05
 def create_verbose_huffman_tree(value_frequency_dict : dict) -> VerboseHuffmanTree:
     nodes = []
     j = 0 # For assigning identifiers to nodes
-    for key in token_prob_dict:
+    for key in value_frequency_dict:
         values_set = set()
         values_set.add(key)
         new_node = VerboseHuffmanTree(j, value_frequency_dict[key], values_set, None, None)
@@ -89,7 +89,7 @@ def create_verbose_huffman_tree(value_frequency_dict : dict) -> VerboseHuffmanTr
 def create_huffman_tree(value_frequency_dict : dict) -> HuffmanTree:
     nodes = []
     j = 0 # For assigning identifiers to nodes
-    for key in token_prob_dict:
+    for key in value_frequency_dict:
         new_node = HuffmanTree(j, value_frequency_dict[key], key, None, None)
         j += 1
         nodes.append(new_node)
@@ -181,7 +181,7 @@ def get_full_code_from_verbose_huffman_tree(huffmantree: VerboseHuffmanTree) -> 
             node_stack.append(current_node.left)
             sub_codeword_identifier_dict[current_node.left.identifier] = sub_codeword_identifier_dict[current_node.identifier] + "1"
         if current_node.right == None and current_node.left == None:
-            codeword_dict[current_node.values.pop()] = sub_codeword_identifier_dict[current_node.identifier]
+            codeword_dict[next(iter(current_node.values))] = sub_codeword_identifier_dict[current_node.identifier]
     return codeword_dict
 
 def get_full_code_from_huffman_tree(huffmantree: HuffmanTree) -> dict:
