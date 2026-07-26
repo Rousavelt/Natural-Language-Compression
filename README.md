@@ -13,4 +13,4 @@ To compare the encoding performance of the three methods, and to research how LL
 A particular highlight is that I created my own Huffman code generator, which was nice. I did it without relying on external tools, and tried to develop the algorithms as far as possible myself.
 They are all O(n) in time I believe, which was the main goal.
 
-Please refer tot he Juptyer Notebook for my other conclusions!
+Please refer to the Juptyer Notebook for my other conclusions!
