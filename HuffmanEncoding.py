@@ -14,7 +14,7 @@ class HuffmanTree:
         self.right = right
 
     def sort_key(self):
-        return (self.frequency, self.value, self.identifier)
+        return (self.frequency, self.identifier)
 
     def __lt__(self, other):
         if not hasattr(other, "frequency") or not hasattr(other, "value") or not hasattr(other, "identifier"):
